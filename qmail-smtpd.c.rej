@@ -1,0 +1,60 @@
+***************
+*** 23,31 ****
+  #include "timeoutread.h"
+  #include "timeoutwrite.h"
+  #include "commands.h"
+  
+  #define MAXHOPS 100
+  unsigned int databytes = 0;
+  int timeout = 1200;
+  
+  int safewrite(fd,buf,len) int fd; char *buf; int len;
+--- 23,33 ----
+  #include "timeoutread.h"
+  #include "timeoutwrite.h"
+  #include "commands.h"
++ #include "dns.h"
+  
+  #define MAXHOPS 100
+  unsigned int databytes = 0;
++ unsigned int mfchk = 0;
+  int timeout = 1200;
+  
+  int safewrite(fd,buf,len) int fd; char *buf; int len;
+***************
+*** 50,55 ****
+  void straynewline() { out("451 See http://pobox.com/~djb/docs/smtplf.html.\r\n"); flush(); _exit(1); }
+  
+  void err_bmf() { out("553 sorry, your envelope sender is in my badmailfrom list (#5.7.1)\r\n"); }
+  void err_nogateway() { out("553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)\r\n"); }
+  void err_unimpl() { out("502 unimplemented (#5.5.1)\r\n"); }
+  void err_syntax() { out("555 syntax error (#5.5.4)\r\n"); }
+--- 52,59 ----
+  void straynewline() { out("451 See http://pobox.com/~djb/docs/smtplf.html.\r\n"); flush(); _exit(1); }
+  
+  void err_bmf() { out("553 sorry, your envelope sender is in my badmailfrom list (#5.7.1)\r\n"); }
++ void err_hmf() { out("553 sorry, your envelope sender domain must exist (#5.7.1)\r\n"); }
++ void err_smf() { out("451 DNS temporary failure (#4.3.0)\r\n"); }
+  void err_nogateway() { out("553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)\r\n"); }
+  void err_unimpl() { out("502 unimplemented (#5.5.1)\r\n"); }
+  void err_syntax() { out("555 syntax error (#5.5.4)\r\n"); }
+***************
+*** 259,264 ****
+  {
+    if (!addrparse(arg)) { err_syntax(); return; }
+    flagbarf = bmfcheck();
+    seenmail = 1;
+    if (!stralloc_copys(&rcptto,"")) die_nomem();
+    if (!stralloc_copys(&mailfrom,addr.s)) die_nomem();
+--- 291,301 ----
+  {
+    if (!addrparse(arg)) { err_syntax(); return; }
+    flagbarf = bmfcheck();
++   switch(mfcheck()) {
++     case DNS_HARD: err_hmf(); return;
++     case DNS_SOFT: err_smf(); return;
++     case DNS_MEM: die_nomem();
++   }
+    seenmail = 1;
+    if (!stralloc_copys(&rcptto,"")) die_nomem();
+    if (!stralloc_copys(&mailfrom,addr.s)) die_nomem();

@@ -1,0 +1,97 @@
+***************
+*** 804,814 ****
+  qmail-pw2u qmail-qread qmail-qstat qmail-tcpto qmail-tcpok \
+  qmail-pop3d qmail-popup qmail-qmqpc qmail-qmqpd qmail-qmtpd \
+  qmail-smtpd sendmail tcp-env qmail-newmrh config config-fast dnscname \
+- dnsptr dnsip dnsmxip dnsfq hostname ipmeprint qreceipt qsmhook qbiff \
+  forward preline condredirect bouncesaying except maildirmake \
+  maildir2mbox maildirwatch qail elq pinq idedit install-big install \
+  instcheck home home+df proc proc+df binm1 binm1+df binm2 binm2+df \
+- binm3 binm3+df
+  
+  load: \
+  make-load warn-auto.sh systype
+--- 824,834 ----
+  qmail-pw2u qmail-qread qmail-qstat qmail-tcpto qmail-tcpok \
+  qmail-pop3d qmail-popup qmail-qmqpc qmail-qmqpd qmail-qmtpd \
+  qmail-smtpd sendmail tcp-env qmail-newmrh config config-fast dnscname \
++ dnsptr dnsip dnsmxip dnsfq dnstxt hostname ipmeprint qreceipt qsmhook qbiff \
+  forward preline condredirect bouncesaying except maildirmake \
+  maildir2mbox maildirwatch qail elq pinq idedit install-big install \
+  instcheck home home+df proc proc+df binm1 binm1+df binm2 binm2+df \
++ binm3 binm3+df spfquery
+  
+  load: \
+  make-load warn-auto.sh systype
+***************
+*** 1439,1450 ****
+  
+  qmail-remote: \
+  load qmail-remote.o control.o constmap.o timeoutread.o timeoutwrite.o \
+- timeoutconn.o tcpto.o now.o dns.o ip.o ipalloc.o ipme.o quote.o \
+  ndelay.a case.a sig.a open.a lock.a seek.a getln.a stralloc.a alloc.a \
+  substdio.a error.a str.a fs.a auto_qmail.o dns.lib socket.lib
+  	./load qmail-remote control.o constmap.o timeoutread.o \
+  	timeoutwrite.o timeoutconn.o tcpto.o now.o dns.o ip.o \
+- 	ipalloc.o ipme.o quote.o ndelay.a case.a sig.a open.a \
+  	lock.a seek.a getln.a stralloc.a alloc.a substdio.a error.a \
+  	str.a fs.a auto_qmail.o  `cat dns.lib` `cat socket.lib`
+  
+--- 1459,1470 ----
+  
+  qmail-remote: \
+  load qmail-remote.o control.o constmap.o timeoutread.o timeoutwrite.o \
++ timeoutconn.o tcpto.o now.o dns.o ip.o ipalloc.o strsalloc.o ipme.o quote.o \
+  ndelay.a case.a sig.a open.a lock.a seek.a getln.a stralloc.a alloc.a \
+  substdio.a error.a str.a fs.a auto_qmail.o dns.lib socket.lib
+  	./load qmail-remote control.o constmap.o timeoutread.o \
+  	timeoutwrite.o timeoutconn.o tcpto.o now.o dns.o ip.o \
++ 	ipalloc.o strsalloc.o ipme.o quote.o ndelay.a case.a sig.a open.a \
+  	lock.a seek.a getln.a stralloc.a alloc.a substdio.a error.a \
+  	str.a fs.a auto_qmail.o  `cat dns.lib` `cat socket.lib`
+  
+***************
+*** 1529,1549 ****
+  compile qmail-showctl.c substdio.h subfd.h substdio.h exit.h fmt.h \
+  str.h control.h constmap.h stralloc.h gen_alloc.h direntry.h \
+  auto_uids.h auto_qmail.h auto_break.h auto_patrn.h auto_spawn.h \
+- auto_split.h
+  	./compile qmail-showctl.c
+  
+  qmail-smtpd: \
+  load qmail-smtpd.o rcpthosts.o commands.o timeoutread.o \
+- timeoutwrite.o ip.o ipme.o ipalloc.o control.o constmap.o received.o \
+- date822fmt.o now.o qmail.o cdb.a fd.a wait.a datetime.a getln.a \
+- open.a sig.a case.a env.a stralloc.a alloc.a substdio.a error.a str.a \
+- fs.a auto_qmail.o socket.lib
+  	./load qmail-smtpd rcpthosts.o commands.o timeoutread.o \
+- 	timeoutwrite.o ip.o ipme.o ipalloc.o control.o constmap.o \
+- 	received.o date822fmt.o now.o qmail.o cdb.a fd.a wait.a \
+- 	datetime.a getln.a open.a sig.a case.a env.a stralloc.a \
+- 	alloc.a substdio.a error.a str.a fs.a auto_qmail.o  `cat \
+- 	socket.lib`
+  
+  qmail-smtpd.0: \
+  qmail-smtpd.8
+--- 1549,1569 ----
+  compile qmail-showctl.c substdio.h subfd.h substdio.h exit.h fmt.h \
+  str.h control.h constmap.h stralloc.h gen_alloc.h direntry.h \
+  auto_uids.h auto_qmail.h auto_break.h auto_patrn.h auto_spawn.h \
++ auto_split.h spf.h
+  	./compile qmail-showctl.c
+  
+  qmail-smtpd: \
+  load qmail-smtpd.o rcpthosts.o commands.o timeoutread.o \
++ timeoutwrite.o ip.o ipme.o ipalloc.o strsalloc.o control.o constmap.o \
++ received.o date822fmt.o now.o qmail.o spf.o dns.o cdb.a fd.a wait.a \
++ datetime.a getln.a open.a sig.a case.a env.a stralloc.a alloc.a substdio.a \
++ error.a str.a fs.a auto_qmail.o socket.lib dns.lib
+  	./load qmail-smtpd rcpthosts.o commands.o timeoutread.o \
++ 	timeoutwrite.o ip.o ipme.o ipalloc.o strsalloc.o control.o \
++ 	constmap.o received.o date822fmt.o now.o qmail.o spf.o dns.o cdb.a \
++ 	fd.a wait.a datetime.a getln.a open.a sig.a case.a env.a stralloc.a \
++ 	alloc.a substdio.a error.a fs.a auto_qmail.o \
++ 	str.a `cat socket.lib` `cat dns.lib`
+  
+  qmail-smtpd.0: \
+  qmail-smtpd.8

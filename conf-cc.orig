@@ -1,0 +1,6 @@
+cc -O2
+
+This will be used to compile .c files.
+cc -O2
+
+This will be used to compile .c files.

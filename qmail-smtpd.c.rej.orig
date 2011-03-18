@@ -1,0 +1,16 @@
+***************
+*** 391,396 ****
+    out("354 go ahead\r\n");
+   
+    received(&qqt,"SMTP",local,remoteip,remotehost,remoteinfo,fakehelo);
+    blast(&hops);
+    hops = (hops >= MAXHOPS);
+    if (hops) qmail_fail(&qqt);
+--- 489,495 ----
+    out("354 go ahead\r\n");
+   
+    received(&qqt,"SMTP",local,remoteip,remotehost,remoteinfo,fakehelo);
++   spfreceived();
+    blast(&hops);
+    hops = (hops >= MAXHOPS);
+    if (hops) qmail_fail(&qqt);
